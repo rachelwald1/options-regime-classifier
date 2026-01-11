@@ -6,6 +6,27 @@ They are not optimised for profitability — they encode common
 options risk-management heuristics.
 """
 
+"""
+Parameter groups:
+
+1. Volatility regime (IV Rank)
+   - Measures how expensive options are relative to their own history.
+   - Low IV Rank suggests options are cheap; high IV Rank suggests they are expensive.
+
+2. Time-to-expiry (DTE)
+   - Controls theta decay and gamma risk.
+   - Very short DTE options are unstable; mid-range DTE offers better risk balance.
+
+3. Liquidity constraints
+   - Ensures prices are reliable and slippage does not dominate outcomes.
+
+4. Risk heuristics
+   - Flags options where time decay is aggressive relative to premium paid.
+
+5. Event handling
+   - Accounts for known events (earnings, macro releases) that distort implied volatility.
+"""
+
 # -----------------------------
 # Volatility regime thresholds
 # -----------------------------
