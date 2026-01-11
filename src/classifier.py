@@ -39,7 +39,7 @@ def classify(snapshot: OptionSnapshot) -> Classification:
     """
     reasons: List[str] = []
 
-    # 1) Liquidity guardrail
+    # 1. Liquidity guardrail
     if snapshot.bid_ask_spread_pct > config.MAX_BID_ASK_SPREAD_PCT:
         return {
             "action": "DO NOTHING",
@@ -54,7 +54,7 @@ def classify(snapshot: OptionSnapshot) -> Classification:
         f"≤ {config.MAX_BID_ASK_SPREAD_PCT:.2f}%"
     )
 
-    # 2) Time-to-expiry guardrail
+    # 2. Time-to-expiry guardrail
     if snapshot.days_to_expiry < config.MIN_DTE and snapshot.objective != "hedge":
         return {
             "action": "DO NOTHING",
@@ -71,7 +71,7 @@ def classify(snapshot: OptionSnapshot) -> Classification:
             "gamma/theta risk is high"
         )
 
-    # 3) Volatility regime
+    # 3. Volatility regime
     regime = _vol_regime(snapshot.iv_rank)
     if regime == "low":
         reasons.append(f"IV Rank low ({snapshot.iv_rank:.0f}) → options relatively cheap")
@@ -80,13 +80,13 @@ def classify(snapshot: OptionSnapshot) -> Classification:
     else:
         reasons.append(f"IV Rank mid ({snapshot.iv_rank:.0f}) → neutral volatility regime")
 
-    # 4) Event risk
+    # 4. Event risk
     if snapshot.upcoming_event:
         reasons.append(
             f"Upcoming event within ~{config.EVENT_LOOKAHEAD_DAYS} days → IV distortion/IV crush risk likely"
         )
 
-    # 5) DTE preference guidance
+    # 5. DTE preference guidance
     if config.PREFERRED_MIN_DTE <= snapshot.days_to_expiry <= config.PREFERRED_MAX_DTE:
         reasons.append(
             f"DTE in preferred window ({config.PREFERRED_MIN_DTE}–{config.PREFERRED_MAX_DTE})"
@@ -100,7 +100,7 @@ def classify(snapshot: OptionSnapshot) -> Classification:
             f"DTE above preferred window (>{config.PREFERRED_MAX_DTE}) → more vega/carry, less capital efficient"
         )
 
-    # 6) Objective-driven posture selection
+    # 6. Objective-driven posture selection
     action: Action = "DO NOTHING"
 
     if snapshot.objective == "speculate":
@@ -143,7 +143,7 @@ def classify(snapshot: OptionSnapshot) -> Classification:
         action = "DO NOTHING"
         reasons.append("Unknown objective (expected: speculate / income / hedge)")
 
-    # 7) Confidence heuristic (simple + explainable)
+    # 7. Confidence heuristic (simple + explainable)
     confidence: Confidence = "medium"
 
     if snapshot.upcoming_event and action.startswith("BUY"):
