@@ -1,0 +1,16 @@
+{
+  "symbol": "AAPL",
+  "price": 100.0,
+  "trend": "up",
+  "days_to_expiry": 35,
+  "upcoming_event": false,
+  "iv": 0.25,
+  "iv_rank": 22.0,
+  "delta": 0.35,
+  "theta": -0.03,
+  "vega": 0.10,
+  "bid_ask_spread_pct": 0.4,
+  "objective": "speculate",
+  "option_type": "call",
+  "strike": 105.0
+}
